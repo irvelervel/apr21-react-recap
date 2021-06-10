@@ -1,4 +1,6 @@
 import { Component } from 'react'
+import Hooks from './Hooks'
+import { Link } from 'react-router-dom'
 
 class Books extends Component {
 
@@ -16,13 +18,18 @@ class Books extends Component {
     // }
 
     state = {
-        name: 'Aizada'
+        name: 'Aizada',
+        todoObject: null,
+        show: true
     }
 
     handleClick = () => {
         // using an arrow function will make this present in the event handler
         // if you use a normal function, you'll need to bind the this in the constructor
         console.log(this)
+        this.setState({
+            show: !this.state.show
+        })
     }
 
     // constructor
@@ -31,7 +38,12 @@ class Books extends Component {
     // componentDidUpdate
     // componentWillUnmount
 
-    componentDidMount() {
+    componentDidMount = async () => {
+
+        // let querystring = new URLSearchParams(this.props.location.search)
+        // let query = querystring.get('query')
+        // let type = querystring.get('type')
+
         // this method gets fired automatically by react once your component has finished loading
         // so effectively AFTER the initial render() invocation
         console.log('componentDidMount')
@@ -46,6 +58,14 @@ class Books extends Component {
                 name: 'Maksym'
             })
         }, 5000)
+
+        let response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
+        console.log(response)
+        let todo = await response.json()
+        console.log(todo)
+        this.setState({
+            todoObject: todo
+        })
     }
 
     componentDidUpdate() {
@@ -69,7 +89,12 @@ class Books extends Component {
         // render is invoked every time there's a change in the component's props or state
         // every render method must return some JSX
         return (
-            <h1 onClick={this.handleClick}>{this.state.name}</h1>
+            <div>
+                <Link to="/detail">
+                    <h1>{this.state.name}</h1>
+                </Link>
+                {this.state.show && <Hooks title="Ingrid" todo={this.state.todoObject} />}
+            </div>
         )
     }
 
